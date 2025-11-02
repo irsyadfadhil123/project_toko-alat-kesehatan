@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 });
 
+// customer
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/products', ProductController::class)->only(['index', 'show']);
 });
 
+// admin
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('/admin/products', ProductController::class);
     Route::resource('/admin/customers', CustomerController::class)->only(['index', 'destroy', 'show']);
