@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -12,7 +11,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('category')->latest()->paginate(10);
-        return view('admin.products.index', compact('products'));
+        return view('products.index', compact('products'));
     }
 
     public function create()
@@ -33,6 +32,11 @@ class ProductController extends Controller
 
         Product::create($request->all());
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+    }
+
+    public function show(Product $product)
+    {
+        return view('products.show', compact('product'));
     }
 
     public function edit($id)

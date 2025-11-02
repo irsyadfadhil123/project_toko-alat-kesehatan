@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,7 +13,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::latest()->paginate(10);
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -20,7 +22,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.categories.create');
     }
 
     /**
@@ -28,23 +30,31 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        request()->validate([
+            'name' => 'required',
+            'description' => 'nullable|string',
+        ]);
+
+        Category::create($request->all());
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        //
+        return view('admin.categories.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        return view('admin.categories.create', compact('category'));
     }
 
     /**
@@ -52,7 +62,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        request()->validate([
+            'name' => 'required',
+            'description' => 'nullable|string',
+        ]);
+
+        Category::findOrFail($id)->update($request->all());
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +77,8 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Category::findOrFail($id)->delete();
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }

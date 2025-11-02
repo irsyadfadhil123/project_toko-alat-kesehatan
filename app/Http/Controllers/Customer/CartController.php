@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Models\User;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class CartController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $customers = User::where('role', 'customer')->latest()->paginate(10);
-        return view('admin.customers.index', compact('customers'));
+        //
     }
 
     /**
@@ -37,10 +34,9 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $customer)
+    public function show(string $id)
     {
-        $customer = $customer->only('name', 'email', 'phone', 'address');
-        return view('admin.customers.show', compact('customer'));
+        //
     }
 
     /**
@@ -62,11 +58,8 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return redirect()->route('customers.index')->with('success', 'Customer berhasil dihapus.');
+        //
     }
 }

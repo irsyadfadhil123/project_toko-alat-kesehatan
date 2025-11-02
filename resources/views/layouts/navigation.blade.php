@@ -1,3 +1,4 @@
+@php $isAdmin = auth()->check() && auth()->user()->role === 'admin'; @endphp
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,6 +16,20 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Produk') }}
+                    </x-nav-link>
+                    @if ($isAdmin)
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                            {{ __('Kategori') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                            {{ __('Pelanggan') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('')">
+                            {{ __('Pesanan') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -69,6 +84,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Products') }}
             </x-responsive-nav-link>
         </div>
 

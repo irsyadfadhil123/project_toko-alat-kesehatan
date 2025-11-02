@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,12 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource('/products', ProductController::class)->only(['index', 'show']);
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('/admin/products', ProductController::class);
-    Route::resource('admin/customers', CustomerController::class)->except('show');
-    Route::resource('admin/categories', CategoryController::class)->except('show');
+    Route::resource('/admin/customers', CustomerController::class)->only(['index', 'destroy', 'show']);
+    Route::resource('/admin/categories', CategoryController::class);
 });
 
 require __DIR__.'/auth.php';
