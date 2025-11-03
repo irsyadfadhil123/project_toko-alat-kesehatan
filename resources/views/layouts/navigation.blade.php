@@ -19,6 +19,7 @@
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                         {{ __('Produk') }}
                     </x-nav-link>
+
                     @if ($isAdmin)
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                             {{ __('Kategori') }}
@@ -27,6 +28,15 @@
                             {{ __('Pelanggan') }}
                         </x-nav-link>
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('')">
+                            {{ __('Pesanan') }}
+                        </x-nav-link>
+                    @endif
+
+                    @if (!$isAdmin)
+                        <x-nav-link :href="route('carts.index')" :active="request()->routeIs('carts.*')">
+                            {{ __('Keranjang') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                             {{ __('Pesanan') }}
                         </x-nav-link>
                     @endif
