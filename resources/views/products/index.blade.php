@@ -21,8 +21,10 @@
                 @endcan
 
                 @can('addToCart', $product)
-                    <form action="{{ route('products.destroy', $product) }}" method="post">
+                    <form action="{{ route('carts.store', $product) }}" method="post">
                         @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="quantity" value="1">
                         <button class="btn">Add to Cart</button>
                     </form>
                 @endcan

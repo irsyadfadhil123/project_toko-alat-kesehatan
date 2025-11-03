@@ -66,6 +66,6 @@ class ProductPolicy
 
     public function addToCart(User $user, Product $product)
     {
-        return $user->role === 'customer';
+        return $user->role === 'customer' && $product->stock > 0;
     }
 }
