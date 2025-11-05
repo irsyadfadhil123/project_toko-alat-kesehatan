@@ -112,7 +112,34 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $order = Order::with('payment')->findOrFail($id);
+
+        if (auth()->user()->role === 'admin') {
+            $data = $request->validate([
+                'status' => 'required|in:pending,approved,processing,shipped,completed,cancelled',
+                'payment_status' => 'nullable|in:pending,paid,failed,refunded',
+                'payment_method' => 'nullable|in:prepaid,postpaid',
+            ]);
+
+            $order->update(['status' => $data['status']]);
+
+            if (isset($data['payment_status']) || isset($data['payment_method'])) {
+                $order->payment()->updateOrCreate(
+                    ['order_id' => $order->id],
+                    [
+                        'payment_status' => $data['payment_status'] ?? ($order->payment->payment_status ?? 'pending'),
+                        'payment_method' => $data['payment_method'] ?? ($order->payment->payment_method ?? null),
+                        'payment_date'   => ($data['payment_status'] ?? null) === 'paid'
+                            ? now()
+                            : $order->payment->payment_date ?? null,
+                    ]
+                );
+            }
+
+            return back()->with('success', 'Order berhasil diperbarui.');
+        }
+
+        abort(403);
     }
 
     /**

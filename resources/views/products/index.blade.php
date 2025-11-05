@@ -38,7 +38,6 @@
             </form>
         </header>
 
-        {{-- ===== Grid Produk ===== --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             @forelse ($products as $product)
                 <div
@@ -46,7 +45,7 @@
 
                     <a href="{{ route('products.show', $product) }}">
                         <div class="h-48 w-full bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden mb-4">
-                            <img src="{{ $product->image_url ?? 'https://via.placeholder.com/300x200?text=No+Image' }}"
+                            <img src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/placeholder.png') }}"
                                  alt="{{ $product->name }}"
                                  class="object-cover h-full w-full group-hover:scale-105 transition-transform duration-300">
                         </div>

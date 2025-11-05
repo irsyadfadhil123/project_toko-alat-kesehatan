@@ -52,10 +52,18 @@
                             {{ __('Keranjang') }}
                         </x-nav-link>
                     @endif
-
                         <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                             {{ __('Pesanan') }}
                         </x-nav-link>
+
+                    @if($isAdmin)
+                            <x-nav-link :href="route('feedbacks.index')" :active="request()->routeIs('feedbacks.*')">
+                                {{ __('Feedback') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('guestBooks.index')" :active="request()->routeIs('guestBooks.*')">
+                                {{ __('Guest Book') }}
+                            </x-nav-link>
+                        @endif
                 </div>
             </div>
 

@@ -28,16 +28,21 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        Product::create($request->all());
-        return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product = \App\Models\Product::create($data);
+        return redirect()->route('products.show', $product)->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function show(Product $product)

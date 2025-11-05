@@ -2,6 +2,9 @@
 @section('title', 'Dashboard')
 @section('content')
     <div>
+        @if($product->image)
+            <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-full max-w-sm object-cover">
+        @endif
         <p>Nama: {{$product->name}}</p>
         <p>Harga: {{$product->price}}</p>
         <p>Deskripsi: {{$product->description}}</p>

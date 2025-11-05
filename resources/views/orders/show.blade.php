@@ -50,14 +50,14 @@
     @if(auth()->check() && auth()->user()->role === 'admin')
         <div class="mt-8 border-t pt-4">
             <h3 class="font-semibold mb-2">Admin: Ubah Status</h3>
-            <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-3">
+            <form action="{{ route('orders.update', $order) }}" method="POST" class="space-y-3">
                 @csrf
                 @method('PUT')
 
                 <div>
                     <label class="block text-sm">Status Pesanan</label>
                     <select name="status" class="border rounded p-2">
-                        @foreach(['pending','approved','processing','shipped','completed','cancelled'] as $st)
+                        @foreach(['pending','approved','shipped','cancelled'] as $st)
                             <option value="{{ $st }}" {{ $order->status === $st ? 'selected' : '' }}>{{ ucfirst($st) }}</option>
                         @endforeach
                     </select>
@@ -66,7 +66,7 @@
                 <div>
                     <label class="block text-sm">Status Pembayaran</label>
                     <select name="payment_status" class="border rounded p-2">
-                        @foreach(['pending','paid','failed','refunded'] as $ps)
+                        @foreach(['pending','paid','failed'] as $ps)
                             <option value="{{ $ps }}" {{ optional($order->payment)->payment_status === $ps ? 'selected' : '' }}>
                                 {{ ucfirst($ps) }}
                             </option>
