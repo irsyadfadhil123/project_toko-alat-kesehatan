@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -11,7 +16,23 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $orders = Order::with('user')
+                ->latest()
+                ->paginate(20);
+
+            return view('orders.index', compact('orders'));
+        }
+
+        $orders = $user->orders()
+            ->with('orderItems.product', 'payment')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -23,19 +44,59 @@ class OrderController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created order (checkout).
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+
+        $carts = Cart::with('product')
+            ->where('user_id', $user->id)
+            ->get();
+
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Keranjang kosong, tidak ada yang dapat diproses.');
+        }
+
+        DB::transaction(function () use ($carts, $user) {
+            $total = 0;
+
+            // 1. Buat record order
+            $order = Order::create([
+                'user_id'      => $user->id,
+                'total_amount' => 0,          // akan di-update setelah dihitung
+                'status'       => 'pending',  // atau status default Anda
+            ]);
+
+            foreach ($carts as $cart) {
+                $subtotal = $cart->product->price * $cart->quantity;
+                $total   += $subtotal;
+
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $cart->product_id,
+                    'quantity'   => $cart->quantity,
+                    'price'      => $cart->product->price,
+                ]);
+            }
+
+            $order->update(['total_amount' => $total]);
+
+            Cart::where('user_id', $user->id)->delete();
+        });
+
+        return redirect()
+            ->route('orders.index')
+            ->with('success', 'Pesanan berhasil dibuat, lanjutkan ke pembayaran.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Order $order)
     {
-        //
+        $order->load(['payment', 'orderItems.product']);
+        return view('orders.show', compact('order'));
     }
 
     /**
@@ -60,5 +121,18 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function cancel(Order $order)
+    {
+        if ($order->user_id != auth()->id()) abort(403);
+
+        if (! in_array($order->status, ['pending', 'approved'])) {
+            return back()->with('error', 'Pesanan sudah tidak dapat dibatalkan.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }

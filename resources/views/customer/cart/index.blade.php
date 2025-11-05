@@ -34,5 +34,20 @@
             </form>
             <p>Total Rp{{ number_format($grandTotal, 0, ',', '.') }}</p>
         @endforeach
+        <div class="mt-6 flex items-center justify-between">
+            <h2 class="text-lg font-semibold">
+                Total: Rp{{ number_format($grandTotal, 0, ',', '.') }}
+            </h2>
+
+            <form action="{{ route('orders.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="total" value="{{ $grandTotal }}">
+                <button
+                    type="submit"
+                    class="px-4 py-2 rounded bg-green-600 text-black hover:bg-green-700">
+                    Pesan Sekarang
+                </button>
+            </form>
+        </div>
     @endif
 @endsection
