@@ -21,10 +21,21 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $customer)
+    public function show(\App\Models\User $customer)
     {
-        $customer = $customer->only('id', 'name', 'email', 'phone', 'address');
-        return view('admin.customers.show', compact('customer'));
+        $stats = \App\Models\Order::where('user_id', $customer->id)
+            ->selectRaw('COUNT(*) as orders_count, COALESCE(SUM(total_amount),0) as orders_total')
+            ->first();
+
+        $feedbacksCount = \App\Models\Feedback::where('user_id', $customer->id)->count();
+
+        // jika ingin akses sebagai array seperti di Blade kamu
+        $data = $customer->only(['id','name','email','phone','address']);
+        $data['orders_count'] = (int) $stats->orders_count;
+        $data['orders_total'] = (int) $stats->orders_total;
+        $data['feedbacks_count'] = (int) $feedbacksCount;
+
+        return view('admin.customers.show', ['customer' => $data]);
     }
 
     /**

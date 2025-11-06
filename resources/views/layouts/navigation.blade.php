@@ -102,9 +102,15 @@
                 @endauth
 
                 @guest
-                    <a href="{{ route('login') }}" class="btn">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-outline">Register</a>
-                @endguest
+                    <a href="{{ route('login') }}"
+                           class="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
+                            Login
+                        </a>
+                        <a href="{{ route('register') }}"
+                           class="ms-2 inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+                            Register
+                        </a>
+                    @endguest
             </div>
 
             <!-- Hamburger -->
