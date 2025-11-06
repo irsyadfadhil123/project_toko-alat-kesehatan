@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 // visitor
 Route::get('/', function () {
     if (Auth::check() && Auth::user()->role === 'admin') {
-        return redirect()->route('dashboard');
+        return redirect()->route('products.index');
     }
     return view('customer.home', ['title' => 'Home']);
 })->name('home');
@@ -39,16 +39,13 @@ Route::middleware('auth')->group(function () {
 
 // admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
     Route::resource('/admin/products', ProductController::class);
     Route::resource('/admin/customers', CustomerController::class)->only(['index', 'destroy', 'show']);
     Route::resource('/admin/categories', CategoryController::class);
     Route::resource('/admin/orders', OrderController::class)->only(['index', 'show', 'update', 'destroy']);
-    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::resource('/feedbacks', FeedbackController::class)->only(['index', 'show', 'destroy']);
-    Route::resource('/guestBooks', GuestBookController::class)->only(['index', 'show' , 'destroy']);;
+    Route::resource('/guestBooks', GuestBookController::class)->only(['index', 'show' , 'destroy']);
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 });
 
 require __DIR__.'/auth.php';

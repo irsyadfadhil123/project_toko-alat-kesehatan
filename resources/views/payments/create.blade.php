@@ -30,7 +30,7 @@
                            {{ old('payment_method') === 'prepaid' ? 'checked' : '' }} required>
                     <div>
                         <p class="font-medium text-gray-900">Prepaid</p>
-                        <p class="text-sm text-gray-600">Bayar di muka sebelum proses.</p>
+                        <p class="text-sm text-gray-600">Bayar menggunakan kartu debit atau kredit.</p>
                     </div>
                 </label>
 
@@ -39,7 +39,7 @@
                            {{ old('payment_method') === 'postpaid' ? 'checked' : '' }} required>
                     <div>
                         <p class="font-medium text-gray-900">Postpaid</p>
-                        <p class="text-sm text-gray-600">Bayar setelah barang diterima/ditagih.</p>
+                        <p class="text-sm text-gray-600">Bayar di toko.</p>
                     </div>
                 </label>
             </div>

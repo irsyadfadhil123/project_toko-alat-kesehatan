@@ -160,7 +160,9 @@ class OrderController extends Controller
 
     public function cancel(Order $order)
     {
-        if ($order->user_id != auth()->id()) abort(403);
+        if ($order->user_id != auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
 
         if (! in_array($order->status, ['pending', 'approved'])) {
             return back()->with('error', 'Pesanan sudah tidak dapat dibatalkan.');
