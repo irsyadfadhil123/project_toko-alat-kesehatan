@@ -34,13 +34,14 @@
                            class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
                             ✏️ Edit
                         </a>
-
-                        <form action="{{ route('categories.destroy', $category) }}" method="POST" class="ml-auto"
-                              onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <x-danger-button>Hapus</x-danger-button>
-                        </form>
+                        <x-confirm-modal
+                            title="Hapus Kategori?"
+                            message="Data kategori yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                            :action="route('categories.destroy', $category)"
+                            method="DELETE"
+                            button-text="Ya, Hapus">
+                            Hapus
+                        </x-confirm-modal>
                     </div>
                 </div>
             @endforeach

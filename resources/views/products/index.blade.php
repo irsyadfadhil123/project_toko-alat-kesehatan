@@ -41,7 +41,7 @@
             <div class="group relative bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition duration-300 flex flex-col">
                 <a href="{{ route('products.show', $product) }}">
                     <div class="h-48 w-full bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden mb-4">
-                        <img src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/placeholder.png') }}"
+                        <img src="{{ $product->image ? asset('storage/'.$product->image) : asset('/images/placeholder.png') }}"
                              alt="{{ $product->name }}"
                              class="object-cover h-full w-full group-hover:scale-105 transition-transform duration-300">
                     </div>
@@ -60,34 +60,14 @@
                     @endcan
 
                     @can('delete', $product)
-                        <x-danger-button
-                            x-data
-                            x-on:click.prevent="$dispatch('open-modal', 'confirm-delete-{{ $product->id }}')">
-                            {{ __('Hapus') }}
-                        </x-danger-button>
-
-                        <x-modal name="confirm-delete-{{ $product->id }}" focusable>
-                            <form method="POST" action="{{ route('products.destroy', $product) }}" class="p-6 space-y-6">
-                                @csrf
-                                @method('DELETE')
-
-                                <h2 class="text-lg font-medium text-gray-900">
-                                    {{ __('Hapus produk ini?') }}
-                                </h2>
-                                <p class="text-sm text-gray-600">
-                                    {{ __('Produk akan terhapus permanen.') }}
-                                </p>
-
-                                <div class="flex justify-end">
-                                    <x-secondary-button x-on:click="$dispatch('close')">
-                                        {{ __('Batal') }}
-                                    </x-secondary-button>
-                                    <x-danger-button class="ms-3">
-                                        {{ __('Hapus') }}
-                                    </x-danger-button>
-                                </div>
-                            </form>
-                        </x-modal>
+                            <x-confirm-modal
+                                title="Hapus Produk?"
+                                message="Data produk yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                                :action="route('products.destroy', $product)"
+                                method="DELETE"
+                                button-text="Ya, Hapus">
+                                Hapus
+                            </x-confirm-modal>
                     @endcan
 
                     @can('addToCart', $product)

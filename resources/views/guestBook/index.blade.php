@@ -35,13 +35,14 @@
                            class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
                             Detail
                         </a>
-
-                        <form action="{{ route('guestBooks.destroy', $guestBook) }}" method="POST" class="ml-auto"
-                              onsubmit="return confirm('Yakin ingin menghapus Guest Book ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <x-danger-button>Hapus</x-danger-button>
-                        </form>
+                        <x-confirm-modal
+                            title="Hapus Guest Book?"
+                            message="Data guest book yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                            :action="route('guestBooks.destroy', $guestBook)"
+                            method="DELETE"
+                            button-text="Ya, Hapus">
+                            Hapus
+                        </x-confirm-modal>
                     </div>
                 </div>
             @endforeach

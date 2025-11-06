@@ -58,20 +58,30 @@ class ProductController extends Controller
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, \App\Models\Product $product)
     {
-        $request->validate([
-            'name' => 'required',
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $product = Product::findOrFail($id);
-        $product->update($request->all());
+        if ($request->hasFile('image')) {
+            // hapus gambar lama kalau ada
+            if ($product->image && file_exists(storage_path('app/public/' . $product->image))) {
+                unlink(storage_path('app/public/' . $product->image));
+            }
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($data);
+
+        return redirect()->route('products.show', $product)
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy($id)

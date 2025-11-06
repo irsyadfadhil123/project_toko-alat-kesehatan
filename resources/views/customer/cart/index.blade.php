@@ -65,13 +65,14 @@
                             <p class="text-lg font-semibold text-indigo-600">
                                 Rp{{ number_format($subtotal, 0, ',', '.') }}
                             </p>
-
-                            <form action="{{ route('carts.destroy', $cart->id) }}" method="POST" class="mt-3"
-                                  onsubmit="return confirm('Hapus item ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <x-danger-button>Hapus</x-danger-button>
-                            </form>
+                            <x-confirm-modal class="text-left"
+                                title="Hapus Keranjang?"
+                                message="Data keranjang yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                                :action="route('carts.destroy', $cart->id)"
+                                method="DELETE"
+                                button-text="Ya, Hapus">
+                                Hapus
+                            </x-confirm-modal>
                         </div>
                     </div>
                 @endforeach

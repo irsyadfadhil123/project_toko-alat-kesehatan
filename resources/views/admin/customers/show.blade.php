@@ -34,12 +34,14 @@
                class="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
                 Kembali
             </a>
-            <form action="{{ route('customers.destroy', $customer['id']) }}" method="POST"
-                  onsubmit="return confirm('Hapus pelanggan ini? Data terkait mungkin ikut terhapus.')">
-                @csrf
-                @method('DELETE')
-                <x-danger-button>Hapus</x-danger-button>
-            </form>
+            <x-confirm-modal
+                title="Hapus Pelanggan?"
+                message="Data pelanggan yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                :action="route('customers.destroy', $customer['id'])"
+                method="DELETE"
+                button-text="Ya, Hapus">
+                Hapus
+            </x-confirm-modal>
         </div>
     </div>
 

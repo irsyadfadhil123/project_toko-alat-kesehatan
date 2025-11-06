@@ -72,28 +72,14 @@
                     @endcan
 
                     @can('delete', $product)
-                        <x-danger-button
-                            x-data
-                            x-on:click.prevent="$dispatch('open-modal', 'confirm-delete-product')">
-                            🗑️ Hapus
-                        </x-danger-button>
-
-                        <x-modal name="confirm-delete-product" focusable>
-                            <form method="POST" action="{{ route('products.destroy', $product) }}" class="p-6 space-y-6">
-                                @csrf
-                                @method('DELETE')
-                                <h2 class="text-lg font-medium text-gray-900">
-                                    Hapus produk ini?
-                                </h2>
-                                <p class="text-sm text-gray-600">
-                                    Produk akan terhapus permanen.
-                                </p>
-                                <div class="flex justify-end">
-                                    <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
-                                    <x-danger-button class="ms-3">Hapus</x-danger-button>
-                                </div>
-                            </form>
-                        </x-modal>
+                            <x-confirm-modal
+                                title="Hapus Produk?"
+                                message="Data produk yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                                :action="route('products.destroy', $product)"
+                                method="DELETE"
+                                button-text="Ya, Hapus">
+                                Hapus
+                            </x-confirm-modal>
                     @endcan
                 </div>
             </div>

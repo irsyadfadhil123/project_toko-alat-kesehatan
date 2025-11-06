@@ -6,6 +6,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\GuestBookController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderReportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}/payment', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/orders/{order}/payment', [PaymentController::class, 'store'])->name('payments.store');
     Route::resource('/feedbacks', FeedbackController::class)->only(['store']);
+    Route::post('/admin/orders/{order}/send-pdf', [OrderReportController::class, 'send'])->name('orders.send-pdf');
 });
 
 // admin
@@ -44,6 +46,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('/admin/customers', CustomerController::class)->only(['index', 'destroy', 'show']);
     Route::resource('/admin/categories', CategoryController::class);
     Route::resource('/admin/orders', OrderController::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::resource('/feedbacks', FeedbackController::class)->only(['index', 'show', 'destroy']);
     Route::resource('/guestBooks', GuestBookController::class)->only(['index', 'show' , 'destroy']);;
 });

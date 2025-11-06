@@ -12,6 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
+        <script src="//unpkg.com/alpinejs" defer></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
@@ -27,11 +28,63 @@
                 </header>
             @endisset
 
-            <!-- Page Content -->
-                <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-                    @yield('content')
+        <!-- Page Content -->
+        <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            @yield('content')
+        </main>
 
-                </main>
+        {{-- Modal Flash Message (Success / Error) --}}
+        @php
+            $flashSuccess = session('success');
+            $flashError = session('error') ?? (session('status') && session('status') !== true ? session('status') : null);
+        @endphp
+        @if($flashSuccess || $flashError)
+            <div x-data="{ open: true }"
+                 x-show="open"
+                 x-transition.opacity
+                 class="fixed inset-0 z-40 flex items-center justify-center px-4 py-6">
+                <div class="fixed inset-0 bg-black/40" @click="open=false"></div>
+
+                <div class="relative z-10 w-full max-w-md">
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+                        <div class="flex items-start gap-3">
+                            @if($flashSuccess)
+                                <div class="shrink-0 text-green-600">
+                                    <!-- Check icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M2.25 12a9.75 9.75 0 1119.5 0 9.75 9.75 0 01-19.5 0zm14.03-2.28a.75.75 0 10-1.06-1.06l-4.72 4.72-2.22-2.22a.75.75 0 10-1.06 1.06l2.75 2.75c.3.3.79.3 1.06 0l5.25-5.25z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-sm font-semibold text-gray-900">Berhasil</h3>
+                                    <p class="mt-1 text-sm text-gray-700">{{ $flashSuccess }}</p>
+                                </div>
+                            @else
+                                <div class="shrink-0 text-red-600">
+                                    <!-- Error icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5zM10.94 8.44a.75.75 0 011.06 0l.53.53.53-.53a.75.75 0 111.06 1.06l-.53.53.53.53a.75.75 0 11-1.06 1.06l-.53-.53-.53.53a.75.75 0 11-1.06-1.06l.53-.53-.53-.53a.75.75 0 010-1.06zM9.75 15a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-sm font-semibold text-gray-900">Gagal</h3>
+                                    <p class="mt-1 text-sm text-gray-700">{{ $flashError }}</p>
+                                </div>
+                            @endif
+                            <button @click="open=false" class="text-gray-400 hover:text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 11-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="mt-5 flex justify-end">
+                            <x-primary-button @click="open=false">Tutup</x-primary-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
                 {{-- Footer Feedback / Guest Book --}}
                     @php($user = auth()->user())
                     @if(!$user || ($user && $user->role !== 'admin'))

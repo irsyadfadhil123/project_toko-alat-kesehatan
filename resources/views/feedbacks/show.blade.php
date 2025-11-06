@@ -40,12 +40,14 @@
                class="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
                 Kembali
             </a>
-            <form action="{{ route('feedbacks.destroy', $feedback) }}" method="POST"
-                  onsubmit="return confirm('Yakin ingin menghapus feedback ini?')">
-                @csrf
-                @method('DELETE')
-                <x-danger-button>Hapus</x-danger-button>
-            </form>
+            <x-confirm-modal
+                title="Hapus Feedback?"
+                message="Data feedback yang dihapus tidak dapat dikembalikan. Yakin ingin melanjutkan?"
+                :action="route('feedbacks.destroy', $feedback)"
+                method="DELETE"
+                button-text="Ya, Hapus">
+                Hapus
+            </x-confirm-modal>
         </div>
     </div>
 </section>

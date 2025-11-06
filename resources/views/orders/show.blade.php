@@ -156,5 +156,14 @@
             </form>
         </div>
     @endif
+
+    @can('view', $order)
+        <form action="{{ route('orders.send-pdf', $order) }}" method="POST">
+            @csrf
+            <button class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
+                Kirim Laporan PDF ke Email
+            </button>
+        </form>
+    @endcan
 </section>
 @endsection

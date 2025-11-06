@@ -61,14 +61,19 @@ class OrderController extends Controller
         DB::transaction(function () use ($carts, $user) {
             $total = 0;
 
-            // 1. Buat record order
             $order = Order::create([
-                'user_id'      => $user->id,
-                'total_amount' => 0,          // akan di-update setelah dihitung
-                'status'       => 'pending',  // atau status default Anda
+                'user_id'          => $user->id,
+                'total_amount'     => 0,
+                'status'           => 'pending',
+                'shipping_address' => $user->address,
             ]);
 
             foreach ($carts as $cart) {
+                // Validasi stok cukup
+                if ($cart->product->stock < $cart->quantity) {
+                    throw new \RuntimeException("Stok produk {$cart->product->name} tidak mencukupi.");
+                }
+
                 $subtotal = $cart->product->price * $cart->quantity;
                 $total   += $subtotal;
 
@@ -78,6 +83,9 @@ class OrderController extends Controller
                     'quantity'   => $cart->quantity,
                     'price'      => $cart->product->price,
                 ]);
+
+                // Kurangi stok produk
+                $cart->product->decrement('stock', $cart->quantity);
             }
 
             $order->update(['total_amount' => $total]);
@@ -158,8 +166,19 @@ class OrderController extends Controller
             return back()->with('error', 'Pesanan sudah tidak dapat dibatalkan.');
         }
 
-        $order->update(['status' => 'cancelled']);
+        DB::transaction(function () use ($order) {
+            // Kembalikan stok untuk tiap item
+            $order->loadMissing('orderItems.product');
+            foreach ($order->orderItems as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
 
-        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+            // Update status order
+            $order->update(['status' => 'cancelled']);
+        });
+
+        return back()->with('success', 'Pesanan berhasil dibatalkan dan stok dikembalikan.');
     }
 }

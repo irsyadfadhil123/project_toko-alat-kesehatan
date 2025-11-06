@@ -61,7 +61,7 @@
                                 Detail
                             </a>
 
-                            @if ($order->status === 'pending' && $order->payment === null)
+                            @if ($order->status === 'pending' && $order->payment === null && Auth::user()->role !== 'admin')
                                 <a href="{{ route('payments.create', $order) }}"
                                    class="inline-flex items-center px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
                                     Bayar
@@ -69,14 +69,20 @@
                             @endif
 
                             @if (in_array($order->status, ['pending','approved']))
-                                <form action="{{ route('orders.cancel', $order) }}" method="POST"
-                                      onsubmit="return confirm('Batalkan pesanan?')" class="ml-auto">
-                                    @csrf
-                                    <button class="inline-flex items-center px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-                                        Batalkan
-                                    </button>
-                                </form>
+                                <x-confirm-modal
+                                    title="Batalkan Pesanan?"
+                                    message="Tindakan ini tidak dapat dibatalkan. Yakin ingin melanjutkan?"
+                                    :action="route('orders.cancel', $order)"
+                                    button-text="Ya, Batalkan">
+                                    Batalkan
+                                </x-confirm-modal>
                             @endif
+                        <form action="{{ route('orders.send-pdf', $order) }}" method="POST" class="ml-auto">
+                            @csrf
+                            <button class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">
+                                Kirim Laporan PDF
+                            </button>
+                        </form>
                         </div>
                     </div>
                 @endforeach

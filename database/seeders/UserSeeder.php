@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'phone' => '081234567890',
         ]);
 
-        // Customer contoh
+        // Customer
         User::factory()->count(5)->create([
             'role' => 'customer'
         ]);
